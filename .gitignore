@@ -15,7 +15,7 @@ env/
 env.bak/
 env1/
 env2/
-pythonenv
+pythonprep/
 
 # IDE specific files
 .idea/

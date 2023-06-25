@@ -24,15 +24,15 @@ To explore the interview questions, follow these steps:
 
 2. Clone the repository:
 
-`pip install ipython jupyter`
+`git clone https://github.com/your-username/python-interview-questions.git`
 
 3. Change into the project directory:
 
-`git clone https://github.com/your-username/python-interview-questions.git`
+`cd python-interview-questions`
 
 4. Launch Jupyter Notebook:
 
-`jupyter notebook`
+`jupyter-notebook`
 
 5. Open the `interview_questions.ipynb` notebook in your browser.
 

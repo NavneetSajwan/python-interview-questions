@@ -53,6 +53,7 @@ limit 10;`
 ### Types of indexing:
 */
 
+/*markdown
 - Three types mainly:
     - Primary indexing: on pk
     - Secondary indexing: on candidate key
@@ -61,7 +62,9 @@ limit 10;`
 
 /*markdown
 ### Optimizations:
+*/
 
+/*markdown
 1. Reduce Table size(scanning data)
 2. Simplify joins(join is a costly option)
     - example:
@@ -71,22 +74,30 @@ limit 10;`
         - then emp_data with emp_salary
 3. Avoid `select * ...` . Use specific cols
 4. Use `where` clause before `group by`:
-    -  group by is costly
+    -  group by is costl
 */
 
 /*markdown
-### Window functions:
 
+### Window functions:
+*/
+
+/*markdown
 - Syntax:
     - `window_function/aggregation() over (partition by c1,c2 order by c1,c2) `
+*/
 
+/*markdown
 - example:
     - `sum() over (partition by dept_name order by salary desc)`
 */
 
 /*markdown
-### Widely used window functios:
 
+### Widely used window functios:
+*/
+
+/*markdown
 - row_number
 - rank
 - dense_rank
@@ -97,23 +108,32 @@ limit 10;`
 - sum(col)
 - min, max, avg, count
 - frame clauses
+
 */
 
 /*markdown
-#### coalesce:
 
+#### coalesce:
+*/
+
+/*markdown
 - returns first value that is not null
 - coalesce(1,2,3) -> 1
 - coalesce(null,2,3) -> 2
 - coalesce(null,null,3) -> 3
+
 */
 
 /*markdown
-### Frame clauses:
 
+### Frame clauses:
+*/
+
+/*markdown
 - can be used for rolling windows
 - whwn we don't have to partition by a column
 - when we need rolling aggregations
+
 */
 
 /*markdown
@@ -127,16 +147,22 @@ limit 10;`
 */
 
 /*markdown
+
 #### Range between:
+*/
 
+/*markdown
 - when we are not certain about the number of rows we want. It basically is a logical range adn depends on the value of the current row in the selected column
+*/
 
+/*markdown
 - Syntax:
     - `aggregate(col) over (order by col range between 100 preceding and 200 following)`
+*/
 
+/*markdown
 - Example:
     - `select *, sum(sales_amount) over (order by sales_date range between interval '6' day precedinh and current row) as weekly_sales from daily_sales`
-*/
 
 /*markdown
 ### Count
@@ -147,7 +173,36 @@ limit 10;`
 - count(*): gives all rows excluding the ones with all nulls
 */
 
+/*markdown
+## Datetime
+*/
 
+/*markdown
+#### DATE_ADD:
+
+- Syntax: `DATE_ADD(date, INTERVAL expr unit)`
+- Example: `SELECT DATE_ADD('2023-01-01', INTERVAL 1 YEAR) AS new_date;`
+*/
+
+/*markdown
+#### DATE_DIFF:
+
+- Syntax: `DATEDIFF(date1, date2)`
+- Example: `SELECT DATEDIFF(end_date, start_date) AS date_difference FROM your_table;`
+*/
+
+/*markdown
+#### TIMESTAMP_DIFF:
+
+- Syntax: `TIMESTAMPDIFF(unit, datetime_expr1, datetime_expr2)`
+- Example: `SELECT TIMESTAMPDIFF(HOUR, start_date, end_date) AS hour_difference
+FROM your_table;`
+
+*/
+
+/*markdown
+
+*/
 
 /*markdown
 

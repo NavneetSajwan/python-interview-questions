@@ -1,0 +1,9 @@
+docker stop mysql
+docker rm mysql
+
+
+docker run --name mysql -d \
+    -p 3308:3306 \
+    -e MYSQL_ROOT_PASSWORD=change-me \
+    -v data:/var/lib/mysql \
+    mysql:8

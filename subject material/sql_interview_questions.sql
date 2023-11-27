@@ -692,12 +692,16 @@ group by app_id
 
 /*markdown
 ## Question 20:
+*/
 
-new TikTok users sign up with their emails and each user receives a text confirmation to activate their account. Assume you are given the below tables about emails and texts.
+/*markdown
+New TikTok users sign up with their emails and each user receives a text confirmation to activate their account. Assume you are given the below tables about emails and texts.
 Write a query to display the ids of the users who did not confirm on the first day of sign-up, but confirmed on the second day.
 Assumption:
 action_date is the date when the user activated their account and confirmed their sign-up through the text.
 */
+
+use interview;
 
 -- Create emails table
 CREATE TABLE emails (
@@ -706,8 +710,8 @@ CREATE TABLE emails (
     signup_date DATETIME
 );
 
+show tables;
 
--- Create texts table
 CREATE TABLE texts (
     text_id INT,
     email_id INT,
@@ -715,12 +719,10 @@ CREATE TABLE texts (
     action_date DATETIME
 );
 
--- Insert data into emails table
 INSERT INTO emails (email_id, user_id, signup_date) VALUES
     (125, 7771, '2022-06-14 00:00:00'),
     (433, 1052, '2022-07-09 00:00:00');
 
--- Insert data into texts table
 INSERT INTO texts (text_id, email_id, signup_action, action_date) VALUES
     (6878, 125, 'Confirmed', '2022-06-14 00:00:00'),
     (6997, 433, 'Not Confirmed', '2022-07-09 00:00:00'),
@@ -729,4 +731,161 @@ INSERT INTO texts (text_id, email_id, signup_action, action_date) VALUES
 select * from emails;
 
 select * from texts;
+
+select email_id, date_add(action_date, interval 1 day) from texts;
+
+select e.user_id,
+e.email_id
+from emails e
+join 
+texts t
+on e.email_id=t.email_id
+where DATEDIFF(t.action_date, e.signup_date) = 1
+
+/*markdown
+## Question 21:
+*/
+
+/*markdown
+Assume you are given the table below on Uber transactions made by users. Write a query to obtain the third transaction of every user. Output the user id, spend and transaction date.
+*/
+
+CREATE TABLE transactions (
+    user_id INT,
+    spend DECIMAL(10, 2),
+    transaction_date TIMESTAMP
+);
+
+INSERT INTO transactions (user_id, spend, transaction_date) VALUES
+(111, 100.50, '2022-01-08 12:00:00'),
+(111, 55.00, '2022-01-10 12:00:00'),
+(121, 36.00, '2022-01-18 12:00:00'),
+(145, 24.99, '2022-01-26 12:00:00'),
+(111, 89.60, '2022-02-05 12:00:00');
+
+select * from transactions;
+
+select 
+user_id,
+spend,
+transaction_date
+from
+(
+    select
+user_id,
+spend,
+transaction_date,
+row_number() over(partition by user_id order by transaction_date asc) rn 
+from transactions
+) sub
+where rn = 3;
+
+/*markdown
+
+## Question 22:
+*/
+
+/*markdown
+Your team at Accenture is helping a Fortune 500 client revamp their compensation and benefits program. The first step in this analysis is to manually review employees who are potentially overpaid or underpaid. An employee is considered to be potentially overpaid if they earn more than 2 times the average salary for people with the same title. Similarly, an employee might be underpaid if they earn less than half of the average for their title. We'll refer to employees who are both underpaid and overpaid as compensation outliers for the purposes of this problem. Write a query that shows the following data for each compensation outlier: employee ID, salary, and whether they are potentially overpaid or potentially underpaid.
+*/
+
+use interview
+
+show tables
+
+CREATE TABLE employee_pay (
+    employee_id INT,
+    salary INT,
+    title VARCHAR(255)
+);
+
+INSERT INTO employee_pay (employee_id, salary, title) VALUES
+(101, 80000, 'Data Analyst'),
+(102, 90000, 'Data Analyst'),
+(103, 100000, 'Data Analyst'),
+(104, 30000, 'Data Analyst'),
+(105, 120000, 'Data Scientist'),
+(106, 100000, 'Data Scientist'),
+(107, 80000, 'Data Scientist'),
+(108, 310000, 'Data Scientist');
+
+select * from employee_pay;
+
+select 
+employee_id,
+salary,
+case 
+    when salary>= 2.0 * avg_salary then 'overpaid'
+    when salary<= 0.5 * avg_salary then 'underpaid'
+    end status
+from
+(select
+employee_id,
+salary,
+title,
+avg(salary) over (partition by title) as avg_salary
+from
+employee_pay
+) sub
+where salary > 2 * avg_salary OR salary < 0.5 * avg_salary;
+
+SELECT
+    employee_id,
+    salary,
+    CASE
+        WHEN salary > 2 * avg_salary THEN 'Overpaid'
+        WHEN salary < 0.5 * avg_salary THEN 'Underpaid'
+    END AS status
+FROM
+    employee_pay
+JOIN (
+    SELECT
+        title,
+        AVG(salary) AS avg_salary
+    FROM
+        employee_pay
+    GROUP BY
+        title
+) AS title_avg ON employee_pay.title = title_avg.title
+WHERE
+    salary > 2 * avg_salary OR salary < 0.5 * avg_salary;
+
+
+/*markdown
+## Question 23:
+
+Assume you are given the tables below containing information on Snapchat users, their ages, and their time spent sending and opening snaps. Write a query to obtain a breakdown of the time spent sending vs. opening snaps (as a percentage of total time spent on these activities) for each of the different age groups.
+Output the age bucket and percentage of sending and opening snaps. Round the percentages to 2 decimal places.
+Notes:
+You should calculate these percentages:
+time sending / (time sending + time opening)
+time opening / (time sending + time opening)
+To avoid integer division in percentages, multiply by 100.0 and not 100.
+
+*/
+
+CREATE TABLE activities (
+    activity_id INT,
+    user_id INT,
+    activity_type VARCHAR(255),
+    time_spent FLOAT,
+    activity_date DATETIME
+);
+
+INSERT INTO activities (activity_id, user_id, activity_type, time_spent, activity_date) VALUES
+(7274, 123, 'open', 4.50, '2022-06-22 12:00:00'),
+(2425, 123, 'send', 3.50, '2022-06-22 12:00:00'),
+(1413, 456, 'send', 5.67, '2022-06-23 12:00:00'),
+(1414, 789, 'chat', 11.00, '2022-06-25 12:00:00'),
+(2536, 456, 'open', 3.00, '2022-06-25 12:00:00');
+
+CREATE TABLE age_breakdown (
+    user_id INT,
+    age_bucket VARCHAR(255)
+);
+
+INSERT INTO age_breakdown (user_id, age_bucket) VALUES
+(123, '31-35'),
+(456, '26-30'),
+(789, '21-25');
 

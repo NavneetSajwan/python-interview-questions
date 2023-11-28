@@ -682,6 +682,11 @@ INSERT INTO events (app_id, event_type, timestamp) VALUES
 
 select * from events
 
+/*markdown
+##### Solution trick:  
+`sum (case when ...  then 1 else 0)`
+*/
+
 select 
 app_id,
 sum(case when event_type="impression" then 1 else 0 end) as impression,
@@ -781,7 +786,6 @@ from transactions
 where rn = 3;
 
 /*markdown
-
 ## Question 22:
 */
 
@@ -811,6 +815,7 @@ INSERT INTO employee_pay (employee_id, salary, title) VALUES
 
 select * from employee_pay;
 
+-- Solution 1: Using window function
 select 
 employee_id,
 salary,
@@ -829,6 +834,7 @@ employee_pay
 ) sub
 where salary > 2 * avg_salary OR salary < 0.5 * avg_salary;
 
+-- Solution 2: using join
 SELECT
     employee_id,
     salary,
@@ -850,10 +856,11 @@ JOIN (
 WHERE
     salary > 2 * avg_salary OR salary < 0.5 * avg_salary;
 
-
 /*markdown
 ## Question 23:
+*/
 
+/*markdown
 Assume you are given the tables below containing information on Snapchat users, their ages, and their time spent sending and opening snaps. Write a query to obtain a breakdown of the time spent sending vs. opening snaps (as a percentage of total time spent on these activities) for each of the different age groups.
 Output the age bucket and percentage of sending and opening snaps. Round the percentages to 2 decimal places.
 Notes:
@@ -861,8 +868,11 @@ You should calculate these percentages:
 time sending / (time sending + time opening)
 time opening / (time sending + time opening)
 To avoid integer division in percentages, multiply by 100.0 and not 100.
-
 */
+
+create database interview;
+
+use interview;
 
 CREATE TABLE activities (
     activity_id INT,
@@ -888,4 +898,20 @@ INSERT INTO age_breakdown (user_id, age_bucket) VALUES
 (123, '31-35'),
 (456, '26-30'),
 (789, '21-25');
+
+
+
+select * from activities;
+
+select * from age_breakdown;
+
+select 
+ab.age_bucket,
+100.0 * sum(case when a.activity_type="open" then time_spent else 0.0 end)/ (sum(case when a.activity_type="open" then time_spent else 0.0 end) + sum(case when a.activity_type="send" then time_spent else 0.0 end)) open,
+100.0 * sum(case when a.activity_type="send" then time_spent else 0.0 end)/ (sum(case when a.activity_type="open" then time_spent else 0.0 end) + sum(case when a.activity_type="send" then time_spent else 0.0 end)) send 
+from
+age_breakdown ab
+join activities a on ab.user_id=a.user_id
+group by ab.age_bucket
+
 

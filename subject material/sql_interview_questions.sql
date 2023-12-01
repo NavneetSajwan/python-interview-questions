@@ -874,6 +874,10 @@ create database interview;
 
 use interview;
 
+show databases;
+
+show tables;
+
 CREATE TABLE activities (
     activity_id INT,
     user_id INT,
@@ -899,19 +903,229 @@ INSERT INTO age_breakdown (user_id, age_bucket) VALUES
 (456, '26-30'),
 (789, '21-25');
 
-
-
 select * from activities;
 
 select * from age_breakdown;
 
 select 
 ab.age_bucket,
-100.0 * sum(case when a.activity_type="open" then time_spent else 0.0 end)/ (sum(case when a.activity_type="open" then time_spent else 0.0 end) + sum(case when a.activity_type="send" then time_spent else 0.0 end)) open,
-100.0 * sum(case when a.activity_type="send" then time_spent else 0.0 end)/ (sum(case when a.activity_type="open" then time_spent else 0.0 end) + sum(case when a.activity_type="send" then time_spent else 0.0 end)) send 
-from
-age_breakdown ab
+ROUND(
+    100.0 * sum(case when a.activity_type="open" then time_spent else 0.0 end)/ 
+    sum(case when a.activity_type in ("open", "send") then time_spent else 0.0 end),2) open,
+ROUND(
+    100.0 * sum(case when a.activity_type="send" then time_spent else 0.0 end)/ 
+    sum(case when a.activity_type in ("open", "send") then time_spent else 0.0 end), 2) send
+from 
+age_breakdown ab 
 join activities a on ab.user_id=a.user_id
 group by ab.age_bucket
 
+/*markdown
+## Question 24:
+The table below contains information about tweets over a given period of time. Calculate the 3-day rolling average of tweets published by each user for each date that a tweet was posted. Output the user id, tweet date, and rolling averages rounded to 2 decimal places.
+Important Assumptions:
+Rows in this table are consecutive and ordered by date.
+Each row represents a different day
+A day that does not correspond to a row in this table is not counted. The most recent day is the next row above the current row.
+Note: Rolling average is a metric that helps us analyze data points by creating a series of averages based on different subsets of a dataset. It is also known as a moving average, running average, moving mean, or rolling mean.
+
+*/
+
+CREATE TABLE tweets (
+    tweet_id INT,
+    user_id INT,
+    tweet_date TIMESTAMP
+);
+
+
+INSERT INTO tweets (tweet_id, user_id, tweet_date) VALUES
+(214252, 111, '2022-06-01 12:00:00'),
+(739252, 111, '2022-06-01 12:00:00'),
+(846402, 111, '2022-06-02 12:00:00'),
+(241425, 254, '2022-06-02 12:00:00'),
+(137374, 111, '2022-06-04 12:00:00');
+
+select * from tweets
+
+    select 
+    user_id,
+    date(tweet_date) tweet_date,
+    count(tweet_id) tweet_count
+    from tweets
+    group by user_id, date(tweet_date)
+
+
+select 
+user_id,
+tweet_date,
+ROUND(avg(tweet_count) over (
+    partition by user_id order by tweet_date rows between 2 preceding and current row 
+    ), 2) rolling_avg
+from
+(
+    select 
+    user_id,
+    date(tweet_date) tweet_date,
+    count(tweet_id) tweet_count
+    from tweets
+    group by user_id, date(tweet_date)
+) sub
+
+
+/*markdown
+## Question 25:
+Assume you are given the table below containing measurement values obtained from a sensor over several days. Measurements are taken several times within a given day.
+Write a query to obtain the sum of the odd-numbered and even-numbered measurements on a particular day, in two different columns.
+Note that the 1st, 3rd, 5th measurements within a day are considered odd-numbered measurements and the 2nd, 4th, 6th measurements are even-numbered measurements.
+*/
+
+CREATE TABLE measurements (
+    measurement_id INT,
+    measurement_value DECIMAL(10,2),
+    measurement_time DATETIME
+);
+
+
+INSERT INTO measurements (measurement_id, measurement_value, measurement_time)
+VALUES
+    (131233, 1109.51, '2022-07-10 09:00:00'),
+    (135211, 1662.74, '2022-07-10 11:00:00'),
+    (523542, 1246.24, '2022-07-10 13:15:00'),
+    (143562, 1124.50, '2022-07-11 15:00:00'),
+    (346462, 1234.14, '2022-07-11 16:45:00');
+
+
+select * from measurements
+
+select 
+measurement_date,
+sum( case when mod(rn,2)=0 then measurement_value else 0 end ) even_measurement,
+sum( case when mod(rn,2)=1 then measurement_value else 0 end ) odd_measurement
+from
+(
+    select 
+    measurement_id,
+    measurement_value,
+    measurement_time,
+    date(measurement_time)  measurement_date,
+    row_number() over  (partition by date(measurement_time)) rn
+    from measurements
+) sub
+group by measurement_date
+
+/*markdown
+## Question 26:
+Assume you are given the following tables on Walmart transactions and products. Find the top 3 products that are most frequently bought together (purchased in the same transaction).
+Output the name of product #1, name of product #2 and number of combinations in descending order.
+*/
+
+create database interview
+
+use interview;
+
+-- Create products table
+CREATE TABLE products (
+    product_id INT,
+    product_name VARCHAR(255)
+);
+
+
+
+-- Create transactions table
+CREATE TABLE transactions (
+    transaction_id INT,
+    product_id INT,
+    user_id INT,
+    transaction_date DATETIME
+);
+
+-- Insert example data into products table
+INSERT INTO products (product_id, product_name)
+VALUES
+    (111, 'apple'),
+    (222, 'soy milk'),
+    (333, 'instant oatmeal'),
+    (444, 'banana'),
+    (555, 'chia seed');
+
+
+
+-- Insert example data into transactions table
+INSERT INTO transactions (transaction_id, product_id, user_id, transaction_date)
+VALUES
+    (231574, 111, 234, '2022-03-01 12:00:00'),
+    (231574, 444, 234, '2022-03-01 12:00:00'),
+    (231574, 222, 234, '2022-03-01 12:00:00'),
+    (137124, 111, 125, '2022-03-05 12:00:00'),
+    (137124, 444, 125, '2022-03-05 12:00:00');
+
+
+select * from transactions
+
+select * from products;
+
+SELECT 
+    -- t1.transaction_id,
+    t1.product_id product1,
+    -- t1.user_id,
+    -- t2.transaction_id,
+    t2.product_id product2,
+    -- t2.user_id    
+    count(t1.transaction_id) combination_count 
+FROM transactions t1
+JOIN transactions t2 ON t1.transaction_id = t2.transaction_id AND t1.product_id < t2.product_id
+JOIN product p1 on 
+GROUP by  t1.product_id, t2.product_id
+ORDER by combination_count DESC
+
+
+
+
+SELECT 
+    t1.transaction_id,
+    t1.product_id p1,
+    t1.user_id,
+    t2.transaction_id,
+    t2.product_id p2
+    t2.user_id    
+FROM transactions t1
+JOIN transactions t2 ON t1.transaction_id = t2.transaction_id AND t1.product_id < t2.product_id
+JOIN products p1 ON t1.product_id = p1.product_id
+JOIN products p2 ON t2.product_id = p2.product_id
+GROUP BY product1, product2
+ORDER BY combination_count DESC
+LIMIT 3;
+
+
+
+/*markdown
+#### Tricks:
+
+**Problem 1:** How to break a the values of a  single column into multiple columns:
+
+1. Use case when to generate new columns.
+2. Perform self join with some condition to create two columns 
+
+**Problem 2:** How to get the complete row in a situation when you have to perform a group by? Since group by essentially forces you to aggregate columns and skip the cols that can't be agregated:
+
+1.  use where in on a grouped data:
+    -  `select * from dummytable where (a, b) in ( select a, b from dummy_table groupy by a)`
+
+**Problem 3:** Unique pairs of all values in a column:
+
+1. Perform self join with a condition t1.col < t2.col
+*/
+
+
+SELECT 
+    p1.product_name AS product1,
+    p2.product_name AS product2,
+    COUNT(*) AS combination_count
+FROM transactions t1
+JOIN transactions t2 ON t1.transaction_id = t2.transaction_id AND t1.product_id < t2.product_id
+-- JOIN products p1 ON t1.product_id = p1.product_id
+-- JOIN products p2 ON t2.product_id = p2.product_id
+-- GROUP BY product1, product2
+-- ORDER BY combination_count DESC
+-- LIMIT 3;
 

@@ -43,6 +43,8 @@ VALUES
 
 select * from interview.candidates;
 
+use interview;
+
 -- solution 1;
 
 select  
@@ -728,10 +730,24 @@ INSERT INTO emails (email_id, user_id, signup_date) VALUES
     (125, 7771, '2022-06-14 00:00:00'),
     (433, 1052, '2022-07-09 00:00:00');
 
+INSERT INTO emails (email_id, user_id, signup_date)
+VALUES
+    (125, 7771, '2022-06-14 00:00:00'),
+    (236, 6950, '2022-07-01 00:00:00'),
+    (433, 1052, '2022-07-09 00:00:00');
+
 INSERT INTO texts (text_id, email_id, signup_action, action_date) VALUES
     (6878, 125, 'Confirmed', '2022-06-14 00:00:00'),
     (6997, 433, 'Not Confirmed', '2022-07-09 00:00:00'),
     (7000, 433, 'Confirmed', '2022-07-10 00:00:00');
+
+INSERT INTO texts (text_id, email_id, signup_action)
+VALUES
+    (6878, 125, 'Confirmed'),
+    (6920, 236, 'Not Confirmed'),
+    (6994, 236, 'Confirmed');
+
+
 
 select * from emails;
 
@@ -971,6 +987,7 @@ from
     group by user_id, date(tweet_date)
 ) sub
 
+show databases;
 
 /*markdown
 ## Question 25:
@@ -978,6 +995,8 @@ Assume you are given the table below containing measurement values obtained from
 Write a query to obtain the sum of the odd-numbered and even-numbered measurements on a particular day, in two different columns.
 Note that the 1st, 3rd, 5th measurements within a day are considered odd-numbered measurements and the 2nd, 4th, 6th measurements are even-numbered measurements.
 */
+
+use interview;
 
 CREATE TABLE measurements (
     measurement_id INT,
@@ -1019,10 +1038,6 @@ Assume you are given the following tables on Walmart transactions and products. 
 Output the name of product #1, name of product #2 and number of combinations in descending order.
 */
 
-create database interview
-
-use interview;
-
 -- Create products table
 CREATE TABLE products (
     product_id INT,
@@ -1063,6 +1078,19 @@ VALUES
 select * from transactions
 
 select * from products;
+
+select
+count(t1.transaction_id) combination_count,
+p1.product_id productid1,
+p2.product_id productid2
+from
+transactions t1
+join transactions t2
+on t1.transaction_id= t2.transaction_id and t1.product_id < t2.product_id
+join products p1 on t1.product_id=p1.product_id
+join products p2 on t2.product_id=p2.product_id 
+group by productid1, productid2
+ORDER by combination_count DESC
 
 SELECT 
     -- t1.transaction_id,
@@ -1128,4 +1156,571 @@ JOIN transactions t2 ON t1.transaction_id = t2.transaction_id AND t1.product_id 
 -- GROUP BY product1, product2
 -- ORDER BY combination_count DESC
 -- LIMIT 3;
+
+
+
+CREATE TABLE test_table (
+    A INT,
+    B INT
+);
+
+-- Inserting data into the table
+INSERT INTO test_table (A, B) VALUES
+    (NULL, NULL),     -- One row has both null
+    (1, NULL),        -- One row has only one null
+    (2, 3);           -- One row has no nulls
+
+
+select * from test_table
+
+select count(1) from test_table
+
+/*markdown
+## Question 27
+Assume you are given the table below containing information on Amazon customers and their spend on products belonging to various categories. Identify the top two highest-grossing products within each category in 2022. Output the category, product, and total spend.
+
+*/
+
+CREATE TABLE product_spend (
+    category VARCHAR(255),
+    product VARCHAR(255),
+    user_id INT,
+    spend DECIMAL(10, 2),
+    transaction_date TIMESTAMP
+);
+
+
+INSERT INTO product_spend (category, product, user_id, spend, transaction_date)
+VALUES
+    ('appliance', 'refrigerator', 165, 246.00, '2021-12-26 12:00:00'),
+    ('appliance', 'refrigerator', 123, 299.99, '2022-03-02 12:00:00'),
+    ('appliance', 'washing machine', 123, 219.80, '2022-03-02 12:00:00'),
+    ('electronics', 'vacuum', 178, 152.00, '2022-04-05 12:00:00'),
+    ('electronics', 'wireless headset', 156, 249.90, '2022-07-08 12:00:00'),
+    ('electronics', 'vacuum', 145, 189.00, '2022-07-15 12:00:00');
+
+select * from product_spend
+
+WITH ranked_products AS (
+    SELECT
+        category,
+        product,
+        spend,
+        ROW_NUMBER() OVER (PARTITION BY category ORDER BY spend DESC) AS rank_within_category
+    FROM
+        product_spend
+    WHERE
+        YEAR(transaction_date) = 2022
+)
+SELECT
+    category,
+    product,
+    spend
+FROM
+    ranked_products
+WHERE
+    rank_within_category <= 2;
+
+
+/*markdown
+## Question 28:
+Assume you are given the table below on user transactions. Write a query to obtain the list of customers whose first transaction was valued at $50 or more. Output the number of users.
+Clarification:
+Use the transaction_date field to determine which transaction should be labeled as the first for each user.
+Use a specific function (we can't give too much away!) to account for scenarios where a user had multiple transactions on the same day, and one of those was the first.
+
+*/
+
+CREATE TABLE user_transactions (
+    transaction_id INT,
+    user_id INT,
+    spend DECIMAL(10, 2),
+    transaction_date TIMESTAMP
+);
+
+INSERT INTO user_transactions (transaction_id, user_id, spend, transaction_date)
+VALUES
+    (759274, 111, 49.50, '2022-02-03 00:00:00'),
+    (850371, 111, 51.00, '2022-03-15 00:00:00'),
+    (615348, 145, 36.30, '2022-03-22 00:00:00'),
+    (137424, 156, 151.00, '2022-04-04 00:00:00'),
+    (248475, 156, 87.00, '2022-04-16 00:00:00');
+
+select * from user_transactions
+
+select 
+user_id
+from
+(select 
+user_id,
+spend,
+row_number() over (partition by user_id order by transaction_date asc) rn
+from
+user_transactions
+) sub
+where rn=1 and spend>=50.00
+
+/*markdown
+## Question 29
+The LinkedIn Creator team is looking for power creators who use their personal profile as a company or influencer page. If someone's LinkedIn page has more followers than the company they work for, we can safely assume that person is a power creator.
+Write a query to return the IDs of these LinkedIn power creators in alphabetical order.
+Assumption:
+A person can work at multiple companies.
+This is the second part of the question, so make sure your start with Part 1 if you haven't completed that yet!
+*/
+
+-- Create personal_profiles Table
+CREATE TABLE personal_profiles (
+    profile_id INT PRIMARY KEY,
+    name VARCHAR(255),
+    followers INT
+);
+
+
+-- Insert data into personal_profiles Table
+INSERT INTO personal_profiles (profile_id, name, followers) VALUES
+(1, 'Nick Singh', 92000),
+(2, 'Zach Wilson', 199000),
+(3, 'Daliana Liu', 171000),
+(4, 'Ravit Jain', 107000),
+(5, 'Vin Vashishta', 139000),
+(6, 'Susan Wojcicki', 39000);
+
+
+-- Create employee_company Table
+CREATE TABLE employee_company (
+    personal_profile_id INT,
+    company_id INT
+);
+
+
+
+-- Insert data into employee_company Table
+INSERT INTO employee_company (personal_profile_id, company_id) VALUES
+(1, 4),
+(1, 9),
+(2, 2),
+(3, 1),
+(4, 3),
+(5, 6),
+(6, 5);
+
+
+
+-- Create company_pages Table
+CREATE TABLE company_pages (
+    company_id INT PRIMARY KEY,
+    name VARCHAR(255),
+    followers INT
+);
+
+-- Insert data into company_pages Table
+INSERT INTO company_pages (company_id, name, followers) VALUES
+(1, 'The Data Science Podcast', 8000),
+(2, 'Airbnb', 700000),
+(3, 'The Ravit Show', 6000),
+(4, 'DataLemur', 200),
+(5, 'YouTube', 16000000),
+(6, 'DataScience.Vin', 4500),
+(9, 'Ace The Data Science Interview', 4479);
+
+
+select * from company_pages
+
+select * from employee_company;
+
+select * from personal_profiles;
+
+select 
+pp.profile_id,
+pp.name employee,
+pp.followers employee_followers,
+cp.name employer,
+cp.followers company_followers
+from 
+company_pages cp 
+join employee_company ec on cp.company_id=ec.company_id
+join personal_profiles pp on ec.personal_profile_id=pp.profile_id
+where pp.followers>=cp.followers
+
+/*markdown
+## Question 31:
+Assume there are three Spotify tables containing information about the artists, songs, and music charts. Write a query to determine the top 5 artists whose songs appear in the Top 10 of the global_song_rank table the highest number of times. From now on, we'll refer to this ranking number as "song appearances".
+Output the top 5 artist names in ascending order along with their song appearances ranking (not the number of song appearances, but the rank of who has the most appearances). The order of the rank should take precedence.
+For example, Ed Sheeran's songs appeared 5 times in Top 10 list of the global song rank table; this is the highest number of appearances, so he is ranked 1st. Bad Bunny's songs appeared in the list 4, so he comes in at a close 2nd.
+Assumptions:
+If two artists' songs have the same number of appearances, the artists should have the same rank.
+The rank number should be continuous (1, 2, 2, 3, 4, 5) and not skipped (1, 2, 2, 4, 5).
+*/
+
+-- Create artists Table
+CREATE TABLE artists (
+    artist_id INTEGER PRIMARY KEY,
+    artist_name VARCHAR(255) NOT NULL
+);
+
+-- Insert Example Data into artists Table
+INSERT INTO artists (artist_id, artist_name) VALUES
+(101, 'Ed Sheeran'),
+(120, 'Drake');
+
+-- Create songs Table
+CREATE TABLE songs (
+    song_id INTEGER PRIMARY KEY,
+    artist_id INTEGER
+);
+
+-- Insert Example Data into songs Table
+INSERT INTO songs (song_id, artist_id) VALUES
+(45202, 101),
+(19960, 120);
+
+
+-- Create global_song_rank Table
+CREATE TABLE global_song_rank (
+    days INTEGER CHECK (days >= 1 AND days <= 52),
+    song_id INTEGER,
+    ranks INTEGER CHECK (ranks >= 1 AND ranks <= 1000000)
+    )
+
+
+-- Insert Example Data into global_song_rank Table
+INSERT INTO global_song_rank (days, song_id, ranks) VALUES
+(1, 45202, 5),
+(3, 45202, 2),
+(1, 19960, 3),
+(9, 19960, 15);
+
+
+select * from global_song_rank;
+
+select * from songs
+
+select * from artists
+
+use interview
+
+select
+a.artist_id,
+a.artist_name,
+sum(days) total_days,
+row_number() over (order by sum(days) desc) rnk -- window functions can be used without partition by clause
+from 
+global_song_rank gsr
+join songs s on gsr.song_id= s.song_id
+join artists a on s.artist_id=a.artist_id
+where ranks<=10
+GROUP by a.artist_id
+order by total_days DESC
+
+
+
+/*markdown
+## Question 32
+
+New TikTok users sign up with their emails, so each signup requires a text confirmation to activate the new user's account.
+Write a query to find the confirmation rate of users who confirmed their signups with text messages. Round the result to 2 decimal places.
+Assumptions:
+A user may fail to confirm several times with text. Once the signup is confirmed for a user, they will not be able to initiate the signup again.
+A user may not initiate the signup confirmation process at all.
+
+*/
+
+select * from emails;
+
+select * from texts;
+
+select 
+round(
+    (
+        sum(case when signup_action="Confirmed" then 1 else 0 end)/
+        count(signup_action)
+        ), 2
+) confirm_rate
+from
+(select 
+e.email_id,
+e.user_id,
+t.text_id,
+t.signup_action
+from emails e
+left join
+texts t
+on e.email_id=t.email_id) sub
+
+/*markdown
+## Question 33:
+When you log in to your retailer client's database, you notice that their product catalog data is full of gaps in the category column. Can you write a SQL query that returns the product catalog with the missing data filled in?
+*/
+
+/*markdown
+Assumptions
+- Each category is mentioned only once in a category column.
+- All the products belonging to same category are grouped together.
+- The first product from a product group will always have a defined category.
+- Meaning that the first item from each category will not have a missing category value.
+*/
+
+CREATE TABLE retailproducts (
+    product_id INTEGER,
+    category VARCHAR(255),
+    name VARCHAR(255)
+);
+
+
+INSERT INTO retailproducts (product_id, category, name) VALUES
+    (1, 'Shoes', 'Sperry Boat Shoe'),
+    (2, 'Shoes', 'Adidas Stan Smith'),
+    (3, 'Shoes', 'Vans Authentic'),
+    (4, 'Jeans', 'Levi 511'),
+    (5, 'Jeans', 'Wrangler Straight Fit'),
+    (6, 'Shirts', 'Lacoste Classic Polo'),
+    (7, 'Shirts', 'Nautica Linen Shirt');
+
+select * from retailproducts
+
+truncate table retailproducts
+
+
+
+/*markdown
+## Question x:
+*/
+
+/*markdown
+Set all the active applcations to closed in the jobapplications table for ABC Corporation
+*/
+
+use interview;
+
+-- Create Company table
+CREATE TABLE Company (
+    company_id INT PRIMARY KEY,
+    company_name VARCHAR(255) NOT NULL
+);
+
+-- Create JobApplications table
+CREATE TABLE JobApplications (
+    application_id INT PRIMARY KEY,
+    status VARCHAR(50) NOT NULL,
+    company_id INT,
+    FOREIGN KEY (company_id) REFERENCES Company(company_id)
+);
+
+
+-- Insert dummy data into Company table
+INSERT INTO Company (company_id, company_name) VALUES
+    (1, 'ABC Corporation'),
+    (2, 'XYZ Ltd'),
+    (3, '123 Industries');
+
+
+-- Insert dummy data into JobApplications table
+INSERT INTO JobApplications (application_id, status, company_id) VALUES
+    (101, 'Pending', 1),
+    (102, 'Rejected', 2),
+    (103, 'Accepted', 3),
+    (104, 'Pending', 1),
+    (105, 'Accepted', 2);
+
+
+select * from Company;
+
+select * from JobApplications;
+
+update JobApplications
+set status='closed'
+where company_id=(select company_id from Company where company_name="ABC Corporation")
+
+
+
+/*markdown
+### Nimoy interview question:
+*/
+
+use interview;
+
+CREATE TABLE bugs (
+    bug_id INT,
+    title VARCHAR(255),
+    priority VARCHAR(50),
+    severity INT
+);
+
+INSERT INTO bugs (title, priority, severity) VALUES
+    ('Bug1', 'High', 10),
+    ('Bug2', 'High', 8),
+    ('Bug3', 'High', 9),
+    ('Bug4', 'Medium', 7),
+    ('Bug5', 'Medium', 6),
+    ('Bug6', 'Medium', 5),
+    ('Bug7', 'Low', 3),
+    ('Bug8', 'Low', 2),
+    ('Bug9', 'Low', 1);
+
+select * from bugs;
+
+select
+*,
+row_number() over (partition by priority order by severity desc) rn
+from bugs
+
+WITH ct1 AS (
+  select * from (SELECT 
+    priority,
+    CASE WHEN rn = 1 THEN title END AS top1,
+    
+  FROM (
+    SELECT
+      *,
+      ROW_NUMBER() OVER (PARTITION BY priority ORDER BY severity DESC) rn
+    FROM bugs
+  ) sub) su
+  WHERE top1 IS NOT NULL
+),
+ct2 AS (
+  select * from (SELECT 
+    priority,
+    CASE WHEN rn = 2 THEN title END AS top2
+  FROM (
+    SELECT
+      *,
+      ROW_NUMBER() OVER (PARTITION BY priority ORDER BY severity DESC) rn
+    FROM bugs
+  ) sub) su
+  WHERE top2 IS NOT NULL
+)
+
+SELECT * FROM ct1 JOIN ct2 ON ct1.priority = ct2.priority;
+
+/*markdown
+### Question 34:
+In consulting, being "on the bench" means you have a gap between two client engagements. Google wants to know how many days of bench time each consultant had in 2021. Assume that each consultant is only staffed to one consulting engagement at a time.
+Write a query to pull each employee ID and their total bench time in days during 2021.
+Assumptions:
+All listed employees are current employees who were hired before 2021.
+The engagements in the consulting_engagements table are complete for the year 2022.
+*/
+
+-- Create staffing Table
+CREATE TABLE staffing (
+    employee_id INTEGER,
+    is_consultant BOOLEAN,
+    job_id INTEGER,
+    PRIMARY KEY (employee_id)
+);
+
+
+
+-- Insert data into staffing Table
+INSERT INTO staffing (employee_id, is_consultant, job_id) VALUES
+(111, true, 7898),
+(121, false, 6789),
+(156, true, 4455);
+
+
+
+-- Create consulting_engagements Table
+CREATE TABLE consulting_engagements (
+    job_id INTEGER,
+    client_id INTEGER,
+    start_date DATE,
+    end_date DATE,
+    contract_amount INTEGER
+);
+
+
+-- Insert data into consulting_engagements Table
+INSERT INTO consulting_engagements (job_id, client_id, start_date, end_date, contract_amount) VALUES
+(7898, 20076, '2021-05-25', '2021-06-30', 11290.00),
+(6789, 20045, '2021-06-01', '2021-11-12', 33040.00),
+(4455, 20001, '2021-01-25', '2021-05-31', 31839.00);
+
+
+select * from staffing
+
+select * from consulting_engagements;
+
+select
+s.employee_id,
+365-datediff(end_date, start_date) as benched_days
+from
+staffing s
+join consulting_engagements  ce
+on s.job_id=ce.job_id and s.is_consultant=1
+
+/*markdown
+## Question 35:
+You are given a songs_history table that keeps track of users' listening history on Spotify. 
+
+The songs_weekly table tracks how many times users listened to each song for all days between August 1 and August 7, 2022.
+
+Write a query to show the user ID, song ID, and the number of times the user has played each song as of August 4, 2022. We'll refer to the number of song plays as song_plays. The rows with the most song plays should be at the top of the output.
+
+Assumption:
+The songs_history table holds data that ends on July 31, 2022. Output should include the historical data in this table.
+There may be a new user in the weekly table who is not present in the history table.
+A user may listen to a song for the first time, in which case no existing (user_id, song_id) user-song pair exists in the history table.
+A user may listen to a specific song multiple times in the same day.
+
+*/
+
+-- Create songs_history Table
+CREATE TABLE songs_history (
+    history_id INTEGER,
+    user_id INTEGER,
+    song_id INTEGER,
+    song_plays INTEGER
+);
+
+
+-- Insert data into songs_history Table
+INSERT INTO songs_history (history_id, user_id, song_id, song_plays) VALUES
+(10011, 777, 1238, 11),
+(12452, 695, 4520, 1);
+
+
+
+-- Create songs_weekly Table
+CREATE TABLE songs_weekly (
+    user_id INTEGER,
+    song_id INTEGER,
+    listen_time DATETIME,
+    PRIMARY KEY (user_id, song_id)
+);
+
+
+-- Insert data into songs_weekly Table
+INSERT INTO songs_weekly (user_id, song_id, listen_time) VALUES
+(777, 1238, '2022-08-01 12:00:00'),
+(695, 4520, '2022-08-04 08:00:00'),
+(125, 9630, '2022-08-04 16:00:00'),
+(695, 9852, '2022-08-07 12:00:00');
+
+
+select * from songs_weekly;
+
+select * from songs_history;
+
+
+select 
+sub.user_id,
+sub.song_id,
+coalesce(sh.song_plays, 0) + coalesce(sub.song_plays, 0) as song_plays
+from
+(
+    select 
+    user_id,
+    song_id,
+    count(listen_time) as song_plays
+    from
+    songs_weekly
+    where day(listen_time)<=4
+    group by user_id, song_id
+) sub
+left outer JOIN
+songs_history sh 
+on sub.user_id=sh.user_id and sub.song_id=sh.song_id
+order by song_plays desc
+
 

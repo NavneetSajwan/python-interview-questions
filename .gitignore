@@ -28,3 +28,4 @@ pythonprep/
 
 # Miscellaneous
 .DS_Store
+airflow-env

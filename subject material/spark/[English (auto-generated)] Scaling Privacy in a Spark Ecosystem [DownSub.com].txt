@@ -1,0 +1,1498 @@
+hi welcome to our pr our session on
+
+scaling privacy with apache spark my
+
+name is aaron colcard
+
+i'm the senior director of engineering
+
+at northwestern mutual
+
+and i'd like to introduce you to
+
+don bosco the cto and co-founder of
+
+privacera
+
+so let's just let's just jump in and
+
+uh and take a look at our agenda and
+
+what we're going to cover today
+
+so we're first going to cover a little
+
+bit of our background
+
+our respective companies our backgrounds
+
+and why we're coming here together
+
+to speak with you today we're going to
+
+talk what
+
+why privacy security and compliance why
+
+why is that important
+
+we'll talk about our respective
+
+approaches we'll talk
+
+we'll begin to place out what is an
+
+ideal problem solved
+
+for those complex problems and then
+
+we're going to try to put real life
+
+into to try to bring real life and
+
+actually try to bring it all together
+
+and tie it together
+
+with something that actually we can use
+
+so my background i work for northwestern
+
+mutual
+
+and we're actually engaged in building
+
+an enterprise scale
+
+unified framework for bringing data
+
+together
+
+in a democratized way our con our
+
+company has a very long respected
+
+history of about 160 years so
+
+compliance privacy and security they're
+
+extremely important to us
+
+as almost cornerstones and we are
+
+actually now at the intersection of how
+
+do you make
+
+agile data actually play along with
+
+compliant data
+
+hey i am don vasquez i am the cto and
+
+co-founder of private server
+
+at privacy. we are doing security and
+
+governance in the cloud for the open
+
+data ecosystem
+
+we have built our solution on top of
+
+apache ranger
+
+which provides centralized access
+
+management for all the services in the
+
+cloud which includes
+
+traditional database database workspaces
+
+database sql analytics
+
+s3 adls redshift snowflake and others
+
+we also do automatic discovery of
+
+sensory information in the cloud
+
+and we can use this classification for
+
+access control and encryption
+
+based on classification i'm also the pmc
+
+member and committee in the project
+
+apache ranger
+
+back to you so suddenly why do we care
+
+so much about private privacy now um
+
+well the way i like to frame it is
+
+we always have always cared about
+
+privacy and we've always actually relied
+
+very deeply on it
+
+but the technology was usually rightly
+
+aligned with how privacy worked and
+
+wasn't actually moving further far ahead
+
+but
+
+over a decade ago or 15 years ago
+
+technology suddenly started outpacing
+
+our ability to actually catch up with
+
+privacy
+
+suddenly we had mobile phones we had
+
+digital we had digital businesses
+
+and the ability for us to actually start
+
+capturing all that data
+
+as what started outpassing our ability
+
+to actually catch up
+
+because it privacy is at its core
+
+an actual policy and an understanding of
+
+like how you're going to actually run
+
+your business
+
+so we have always really cared about
+
+privacy
+
+but it's really now as we start looking
+
+at these technologies of about how to
+
+advance
+
+bring data democratization together
+
+where
+
+all of a sudden we now have to start
+
+looking a little bit deeper
+
+at these concerns and another reason why
+
+we also care about privacy is our
+
+governments have started really caring
+
+about privacy
+
+uh up until a couple years ago privacy
+
+regulations
+
+really didn't exist because the
+
+technology because
+
+it was just assumed that privacy was
+
+built into your process
+
+so we now have new regulations gdpr
+
+introduced a couple
+
+years ago by the european union has
+
+helped us start recognizing how we
+
+actually had to implement privacy
+
+into our technical systems and ccpa
+
+implemented by california
+
+also starts bringing us regulation on
+
+how to do it
+
+more importantly if you're in any type
+
+of regulated business where you
+
+actually have audits or you have some
+
+responsibility you are also care about
+
+privacy
+
+because it's a risk when when you're
+
+collecting this type of information
+
+about your customer
+
+so a good way to paint this is
+
+if you've ever gone to any sort of
+
+website now
+
+you usually see like some sort of banner
+
+that pops up at the bottom that says
+
+except cookies that's because browsers
+
+now also are looking at
+
+how do they protect your privacy what do
+
+they collect how do they make you aware
+
+of it
+
+and so we've always most companies have
+
+always
+
+published a privacy policy for you to
+
+find on their website
+
+but very few people have actually really
+
+gone in search of it to really
+
+understand how is their data being used
+
+and that's actually a very important
+
+that's actually a very important aspect
+
+of us as consumers
+
+which is actually understanding that
+
+when we interact with
+
+a with any type of entity is how are
+
+they going to use our information
+
+do they plan to monetize it sell it
+
+trade it
+
+or do they just plan to use it to help
+
+actually improve our customer experience
+
+and allow their com the company to
+
+actually build their products better
+
+based off of the information that
+
+they're collecting so
+
+when we round up privacy is really
+
+actually a policy
+
+and a legal obligation for for any
+
+organization to recognize
+
+and the reality is as as our computer
+
+systems are getting better
+
+our ability to automate our ability to
+
+understand
+
+implementing of anything artificial
+
+intelligence anything machine learning
+
+it's only going to pick up speed and
+
+that's actually going
+
+one way well the other way more
+
+regulations are arriving
+
+to actually start regulating more around
+
+privacy
+
+so our ability to actually execute our
+
+data
+
+programs our ability to learn and our
+
+ability to actually improve our own
+
+projects
+
+projects and products is actually highly
+
+dependent upon
+
+our ability to respect our users rights
+
+and if anything just the ability for us
+
+to
+
+mature our own programs means that we do
+
+have to implement the governance brought
+
+program to actually understand
+
+what's going inside going on inside our
+
+organization
+
+now when we talk about another aspect
+
+technology like apache spark has really
+
+opened up
+
+our capability to democratize our data
+
+the
+
+amount of pro the amount of ability
+
+to process data and to
+
+shift through it look through it and
+
+create new use cases has been
+
+greatly enabled by apache spark and
+
+another aspect is also that almost every
+
+company now is looking at this aspect of
+
+how to actually make
+
+that their data and their data programs
+
+more accessible to their business users
+
+that's through making marketplace uh
+
+marketplaces
+
+that can enrich and share the data and
+
+then that starts begging the ques
+
+the fundamental aspects of privacy
+
+who in the company can actually view it
+
+do they actually have the controls
+
+to actually protect the information from
+
+who's actually looking at it
+
+can we verify that the information is
+
+actually being used for the right
+
+purpose
+
+those are important questions that we
+
+actually have to care about
+
+in order for us to actually scale to
+
+actually implement the privacy program
+
+program and so we'll emphasize
+
+on the most right on the right most
+
+concern because
+
+what is privacy because it is
+
+fundamentally different than the other
+
+of the other two left-most tiles
+
+of security and compliance privacy at
+
+its fundamental core
+
+is actually having the authorized and
+
+legitimate
+
+usage of that data and that is
+
+fundamentally different
+
+than security because security is
+
+actually
+
+just protecting the authorized usage of
+
+data
+
+and keeping those who shouldn't be using
+
+the data
+
+but privacy is interesting because we're
+
+now talking about a scenario where a
+
+business user
+
+may actually have the secured right to
+
+look at the data
+
+but that doesn't actually ensure that
+
+there's actually privacy
+
+or the actual usage of the data and
+
+privacy actually goes deeper when
+
+it starts talking about the actual owner
+
+of the data
+
+what is your consent rights did you
+
+actually authorize this
+
+did you actually want the data shared
+
+shared
+
+and this is actually a slippery space
+
+because privacy
+
+is ultimately a policy implementation
+
+of your organization based off of
+
+your legal how you understand the legal
+
+obligations
+
+where and how you do business those
+
+intersection
+
+it's different because compliance
+
+ultimately
+
+is actually how you're balancing
+
+security
+
+and privacy as your main concerns
+
+so let's examine a couple strategies to
+
+scale agile data with privacy
+
+so this is now beginning to paint off
+
+what a little bit about how do we get to
+
+our
+
+ideal system could we actually build
+
+our ideal system by building a metadata
+
+layer that defines pii in the schema
+
+well it's flexible we can certainly
+
+change it extremely fast
+
+but and user and users and developers
+
+can and will change where the pii is
+
+stored
+
+that means we can actually update it
+
+fairly quickly if we discover a new
+
+field
+
+needs to have privacy or security on it
+
+and but there are fundamental problems
+
+with that
+
+meaning that we don't really know
+
+as if that field is correct and we can
+
+actually
+
+basically chase our users around and
+
+chase people around to find out is this
+
+actually correct where
+
+or we could also take another approach
+
+where we say
+
+look let's go build some views with the
+
+permissions and we'll just limit those
+
+to the certain you
+
+to certain users as we start
+
+understanding them
+
+but that's not very scalable it takes a
+
+little bit of work to actually build
+
+a view it takes a little bit of time to
+
+actually go deploy it
+
+and then we always have to show who's
+
+accessed and why we actually have to
+
+understand those information
+
+and really if you think about it these
+
+scenarios are really security scenarios
+
+not really privacy security scenarios
+
+because we still didn't actually
+
+talk about was it the legitimate usage
+
+of the data and how did we track it
+
+so let's talk a little bit about those
+
+challenge further in those challenges
+
+when we talk about the metadata being
+
+flexible
+
+could we actually take another approach
+
+and start thinking in terms of policies
+
+we define policies is this attribute
+
+that can we actually look at this
+
+attribute and say that this is
+
+classified in a certain way
+
+and actually represents a certain value
+
+and because of
+
+its certain value and what it represents
+
+to us
+
+then we should actually secure it based
+
+off of who's actually
+
+accessing it and understanding that data
+
+that seems a little bit more flexible
+
+and a little bit more to what
+
+we're trying to do with privacy we're
+
+trying to secure it against the
+
+usage of the data could we also
+
+could we also keep up with our view
+
+strategy
+
+well the first time we do our project
+
+we'll discover
+
+maybe we used 15 000 fields and we
+
+inventoried them
+
+all proper but then suddenly we're asked
+
+to add
+
+one more extra thing and we discover
+
+another 10 000 fields and then maybe
+
+another another
+
+five thousand another two thousand
+
+quickly you're outpaced and your
+
+framework isn't scaling
+
+and you're falling behind so
+
+thinking in terms of how do you actually
+
+implement the same type of
+
+access control but making it dynamic
+
+would bring us to an ideal state and
+
+remember
+
+security is fundamentally different than
+
+privacy
+
+security is actually not only a
+
+different domain
+
+with a different set of skills it is
+
+about whether or not the door is locked
+
+or the door is open
+
+and we really are talking about how
+
+we're protecting the usage
+
+of our customers data the people that
+
+get contributed our data
+
+and then how are we actually making sure
+
+that's properly
+
+used and leveraged so with this i'll
+
+pass this off to
+
+don bosco to talk about how we can
+
+actually solve our problems yeah let's
+
+see in real life what happens right
+
+our ultimate goal is to ensure that we
+
+can protect our customers personal and
+
+sensory information
+
+that we store in our environment and
+
+also we can use them
+
+as per the concern that they are given
+
+to us there are a lot of comprehensive
+
+regulations out there to ensure that we
+
+follow that
+
+to go through a few use cases like if
+
+gdpr ccp is applicable to you
+
+then your customers can ask you not to
+
+use their personal data for marketing
+
+purposes
+
+then you are required to expand those
+
+data from your data set
+
+which are used for marketing purposes in
+
+the health care industry a patient might
+
+ask you to provide how their personal
+
+data has been used
+
+so you're obligated to provide that
+
+information to them and there are other
+
+use cases where
+
+almost all compliance policies the
+
+constraints on the original
+
+source data need to be carried forward
+
+to wherever the data has been copied
+
+onboard
+
+so if you feel
+
+difficult in the real world it's a lot
+
+more complicated
+
+so if you look at this data diagram the
+
+bottom layer represents
+
+storage data could be stored in
+
+object stores like s3 and adlers in
+
+different file formats like park a and r
+
+and also you have data in databases like
+
+red shaped and snowflake and synapse
+
+the layer above that is a sql engine
+
+layer you have tools like databricks to
+
+access data from object stores
+
+and this tools provided structured
+
+representation of the data similar to
+
+the traditional database
+
+on the left hand side you have the
+
+different personas
+
+you may have data scientists and
+
+architects primarily accessing the raw
+
+data at the lower level or the
+
+database level then
+
+on top of it you have the query
+
+virtualization tools like drumeo and
+
+renault which will provide
+
+both data source abstraction and also
+
+performance benefits
+
+and you have a different set of users
+
+and rules accessing
+
+like data analysts may primarily use
+
+premiere treatment for doing their
+
+analysis
+
+and you have business users you may have
+
+used dashboards or they may
+
+use bi tools like power bi and tableau
+
+right
+
+then in a open data ecosystem
+
+data can move from one system to another
+
+system or different
+
+tools might access the same underlying
+
+data source for different purposes
+
+so regardless which tool or whose access
+
+is accessing this data
+
+you have to have the same original
+
+policies consistently applied across the
+
+board
+
+yeah to make it more difficult for
+
+enterprises some of the tools used by
+
+to enforce security and privacy policies
+
+could be the same
+
+the privacy team might have their own
+
+set of requirements which will be based
+
+on state country and
+
+other industry regulations while the
+
+security team is responsible for
+
+unauthorized access to data
+
+data leakage and create encryption might
+
+end up using a similar tool
+
+or you may build one tool on top of
+
+other tools and then there are data
+
+owners
+
+who are more concerned how their data
+
+has been used and for what purpose
+
+right and all of them need some level of
+
+monitoring may not be the same reports
+
+but a slightly different type of reports
+
+are already records right so now we have
+
+to make sure that when we are
+
+implementing policies we are not
+
+overriding each other's policies others
+
+will be
+
+very difficult to enforce anything
+
+and also you need to manage them much
+
+more holistically
+
+so the best way to solve this problem is
+
+to use the right
+
+set of tools first we need to classify
+
+sensitive data and personal layer in all
+
+systems
+
+then use this classification to manage
+
+access policies
+
+also encrypt pi fields and also do data
+
+cleansing
+
+finally centralize the audits from all
+
+systems so that we can
+
+do checks and balances generate
+
+comprised reports or security repos
+
+uh do attestations of entitlement
+
+so we'll go through in depth in each one
+
+of them
+
+so let's start with data discovery right
+
+the first thing as aaron mentioned
+
+is pretty pretty impossible in today's
+
+scale
+
+to do manually classify everything so
+
+you have to automate it
+
+then when you are trying to do
+
+classification
+
+you should try to be as granular as
+
+possible example if you have a parquet
+
+file
+
+it's better to classify at the field
+
+level so instead of saying that a
+
+file is containing ssn if you can
+
+identify which
+
+field is assessment then it's easier for
+
+you to encrypt or mask that feed in the
+
+future
+
+also instead of just classifying data as
+
+conference or non-confidential
+
+it's better to survive as detail as
+
+possible if you have
+
+phone numbers or ssn or email then
+
+classy classify them as
+
+phone numbers ssl and emails and then
+
+you can build a hierarchy on top of it
+
+you can say
+
+phone number is confidential srno or
+
+ssnis countries yes or no
+
+the reason is policy changes very often
+
+today email address might not be
+
+considered as a confidential data
+
+but tomorrow it might change and make it
+
+as a confidential data so you don't want
+
+to rescan and reclassify everything
+
+so if you have already scanned and
+
+transferred an email address
+
+and if you have built a hierarchy you
+
+can just consider that email address is
+
+a confidential data so that way
+
+your policies can be much more efficient
+
+and also where possible try to carry
+
+forward the source of the data
+
+as the data is moving from one place to
+
+another place example
+
+if you are collecting patient data
+
+information from a hospital visit
+
+but due to your power regulation you
+
+can't use that data for marketing
+
+but the same or similar data may be
+
+available from the same user from
+
+another channel
+
+let's assume the consumer has subscribed
+
+for a newsletter and might have given
+
+their email address to you and they may
+
+be okay to
+
+use the data for marketing so if you
+
+have the source data with you
+
+then you can apply different policies
+
+for different purposes or uses of the
+
+data
+
+now the main challenge comes is is how
+
+am i going to target and when i'm going
+
+to tag it right
+
+so unfortunately there's no one place or
+
+one one way to tag
+
+so so you have to start tagging at the
+
+time of ingest
+
+because at that time yeah you know the
+
+source of the data
+
+and you'll be also using tools like
+
+apache spark which can help you scan and
+
+classify it
+
+and in the open data ecosystem data
+
+moves from one place to another place
+
+so even though you might have tagged at
+
+the source or the at the time of entry
+
+the data may move around so it's very
+
+important that you are
+
+propagating the tags from wherever the
+
+data is going
+
+and this is unfortunately very difficult
+
+because with all the tools that we have
+
+it's very difficult to
+
+keep track of the tags and where the
+
+data is going right
+
+so one of the ways you can do is you can
+
+do you can instrument your
+
+transformation job if your retail jobs
+
+have you know any
+
+jobs going on you can use you can put
+
+additional
+
+code in it or you can use tools like
+
+spline and spark which can automatically
+
+do it for you it can capture the limbs
+
+and you can use that lineage to do
+
+stitching and
+
+propagate the attacks
+
+and there's one more thing right you may
+
+get data into your system through a
+
+formal etl process
+
+but there are also users in your in your
+
+company which may
+
+upload their own data they may get data
+
+from
+
+open source uh from the download from
+
+somewhere and they may upload it
+
+into your system and some of this data
+
+might have
+
+sensitive information so you have to
+
+keep a watch for that and
+
+you have to as soon as someone uploads
+
+that any data you have to automatically
+
+scan them and classify them
+
+and if you feel they are not supposed to
+
+bring those data you should immediately
+
+alert it target and remove it possible
+
+the next is access control now
+
+traditionally we have been using
+
+resource-based policy
+
+what that really means is you've been
+
+setting policies at the tables
+
+or the file level but this is not a
+
+scalable model if you
+
+look into today's uh system if you
+
+have millions and millions of files or
+
+objects stored in
+
+s3 or adms and you may have thousands of
+
+uh
+
+tables and cards so it's very difficult
+
+to keep the policies consistent across
+
+different systems
+
+so if you're using data classification
+
+once you
+
+classify the data it becomes very easy
+
+for you to manage the policy based on
+
+tags so you can say what who can see
+
+what tags and you can
+
+make sure this policies are enforced
+
+consistently across
+
+all the different systems so you don't
+
+have to worry about whether it's a table
+
+it's a file
+
+if the data has been tied you can allow
+
+or deny it
+
+uh the other thing that you may have to
+
+do is um
+
+try to see if they can use dynamic row
+
+level filtering right
+
+um this is a better alternative to views
+
+because views as much as it has been
+
+properly used
+
+but if you have a lot of use cases it
+
+may give you an
+
+explosion of news and it's very
+
+difficult to manage and another
+
+downside of views is um the you
+
+the user regarding that query needs to
+
+know the name of the view
+
+and very difficult to keep track all the
+
+different news that are possible
+
+and what they support with dynamic
+
+rollover filter
+
+one good thing is when the user runs the
+
+query
+
+on the same table different set of data
+
+are returned based on the user and the
+
+purpose of the quiz
+
+so if you have a data analyst who's
+
+running a query for marketing purpose
+
+then the dynamic rollover filter can
+
+filter out the data for the users
+
+who are not even given consent so in
+
+this way now you don't
+
+have to duplicate data you can provide
+
+the same
+
+access to the same table to two
+
+different users
+
+for two different purpose and in that
+
+way you can keep changing the policy
+
+depending upon the
+
+privacy constraints you can apply the
+
+same thing for dynamic masking
+
+also for decryption also with dynamic
+
+masking
+
+if the user does not have the permission
+
+to see the data let's say
+
+email address then it will be
+
+automatically masked
+
+and the query they will be running this
+
+change whether they have function
+
+do not have permission similarly for
+
+decryption let's assume you are
+
+encrypting the data at rest
+
+and there's a certain user who has the
+
+permission to see the data and clear
+
+text then you can dynamically decrypt
+
+it at runtime in this way you don't have
+
+to duplicate a dataset
+
+and you should also try to plan to
+
+integrate your access control with
+
+approval workflows
+
+in this way you can track who's
+
+requesting and approving and you can put
+
+additional constraints like term of use
+
+the duration of
+
+access or anything else that may be
+
+required from the privacy point of view
+
+and it's also helped you to come up with
+
+more better
+
+reports so let's go to the next one
+
+uh the next one is auditing and
+
+reporting
+
+auditing is also another challenging
+
+part right it's so many different
+
+systems
+
+and logging mechanisms is very difficult
+
+to keep
+
+track of who is accessing data for what
+
+purpose
+
+so you should try as much as possible to
+
+centralize the audits to one location
+
+and there are a lot of advantage of that
+
+first of all you can see all the audit
+
+logs
+
+in one place then second is
+
+you can generate reports to meet
+
+different requirements right
+
+your compliance team might require one
+
+set of reports
+
+while your data owners may want to know
+
+who's accessing the data and for what
+
+purpose
+
+your security may need audit for some
+
+other reason
+
+so having it in one place it's much
+
+easier for you to
+
+consolidate all the accesses uh come up
+
+with customized report as you when
+
+needed and if you're doing
+
+classification
+
+then you can also generate more
+
+actionable reports like who's accessing
+
+pi data
+
+from which system and for what purpose
+
+so to wrap it up for scaling privacy in
+
+today's
+
+open data ecosystem you need to
+
+implement automated data discovery you
+
+need to have a centralized access
+
+control
+
+and also a centralized culture
+
+we'd like to thank you very much for
+
+attending our session
+
+and learning a little bit about how to
+
+scale privacy
+
+with apache spark uh if
+
+for any feedback and questions uh let us
+
+know
+
+and we'd love to uh answer any questions
+
+that you have
+

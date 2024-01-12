@@ -2,7 +2,7 @@
 ## Nth highest salary
 */
 
-show DATABASES
+show DATABASES;
 
 create database interview;
 

@@ -30,3 +30,4 @@ pythonprep/
 .DS_Store
 sparkenv
 airflow-env
+subject material/spark/data

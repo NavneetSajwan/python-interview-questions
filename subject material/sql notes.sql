@@ -250,5 +250,47 @@ SELECT column_name(s) FROM table2;
 */
 
 /*markdown
+### GROUP_CONCAT:
 
+The `GROUP_CONCAT` function is used in SQL to concatenate values from multiple rows into a single string within each group. This can be particularly useful when you want to aggregate and display multiple values in a comma-separated list, for example. Here's a simple example:
+
+Suppose you have a table called `students` with the following data:
+
+*/
+
+CREATE TABLE interview.students (
+    class_id INT,
+    student_name VARCHAR(50)
+);
+
+INSERT INTO interview.students (class_id, student_name) VALUES
+(1, 'Alice'),
+(1, 'Bob'),
+(1, 'Charlie'),
+(2, 'David'),
+(2, 'Eva');
+
+/*markdown
+Now, let's say you want to retrieve a list of students for each class. You can use `GROUP_CONCAT` for this:
+*/
+
+SELECT class_id, GROUP_CONCAT(student_name) AS student_list
+FROM interview.students
+GROUP BY class_id;
+
+/*markdown
+
+
+The result of this query would be:
+
+```
+| class_id | student_list     |
+|----------|------------------|
+| 1        | Alice,Bob,Charlie|
+| 2        | David,Eva        |
+```
+
+In this example, the `GROUP_CONCAT(student_name)` function concatenates the `student_name` values for each `class_id`, separating them with commas. The `GROUP BY class_id` clause groups the results by the `class_id` column. As a result, you get a list of students for each class, with their names separated by commas.
+
+Keep in mind that the exact syntax and behavior of `GROUP_CONCAT` might vary slightly depending on the database system you're using. The example above is based on generic SQL syntax.
 */

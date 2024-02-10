@@ -2,6 +2,10 @@
 ## Nth highest salary
 */
 
+/*markdown
+
+*/
+
 show DATABASES;
 
 create database interview;
@@ -81,7 +85,17 @@ insert into interview.parts_assembly (part,  assembly_step) values ('bumper', 3)
 insert into interview.parts_assembly (part,  assembly_step) values ('bumper', 4);
 
 
-select * from parts_assembly
+select * from interview.parts_assembly
+
+with cte as (
+    select part, max(assembly_step)
+from interview.parts_assembly
+group by part
+)
+
+select distinct(part) from interview.parts_assembly
+where finish_date is NULL
+and (part, assembly_step) in (select part, assembly_step from cte)
 
 -- Solution 2:
 SELECT *
@@ -136,8 +150,8 @@ interview.viewership;
 */
 
 /*markdown
-You are given the tables below containing information on Robinhood trades and users. Write a query to list the top three cities that have the most completed trade orders in descending order.
 
+You are given the tables below containing information on Robinhood trades and users. Write a query to list the top three cities that have the most completed trade orders in descending order.
 */
 
 -- Create users table
@@ -177,15 +191,15 @@ INSERT INTO trades (order_id, user_id, price, quantity, status, timestamp) VALUE
 (100565, 265, 25.60, 5, 'Completed', '2022-12-19 12:00:00');
 
 
-select * from trades;
+select * from interview.trades;
 
-select * from users
+select * from interview.users
 
 /*markdown
 #### Solution 4:
 */
 
--- OPtionn1:
+-- Optionn1:
 select city,
 count(order_id) as total_orders
 from
@@ -229,7 +243,6 @@ LIMIT 3;
 
 /*markdown
 Assume you are given the table below that shows job postings for all companies on the LinkedIn platform. Write a query to get the number of companies that have posted duplicate job listings (two jobs at the same company with the same title and description).
-
 */
 
 -- drop table job_listings
@@ -251,8 +264,18 @@ INSERT INTO job_listings (job_id, company_id, title, description) VALUES
 (172, 244, 'Data Engineer', 'Data engineer works in a variety of settings to build systems that collect, manage, and convert raw data into usable information for data scientists and business analysts to interpret.'),
 (190, 244, 'Data Engineer', 'Data engineer works in a variety of settings to build systems that collect, manage, and convert raw data into usable information for data scientists and business analysts to interpret.');
 
+select * from interview.job_listings;
 
-select * from job_listings;
+select
+count(*)
+from
+(select 
+company_id,
+title
+FROM
+interview.job_listings
+group by company_id, title
+having count(*)> 1) sub
 
 -- Solution 5:
 SELECT count(DISTINCT company_id) AS duplicate_companies
@@ -290,7 +313,7 @@ INSERT INTO transactions (transaction_id, account_id, transaction_type, amount) 
 (128, 201, 'Withdrawal', 10.00);
 
 
-select * from transactions;
+select * from interview.transactions;
 
 SELECT
 account_id,
@@ -367,23 +390,39 @@ Assume that you are given the table below containing information on various orde
 Output the user id and number of products in descending order. To break ties (i.e., if 2 customers both bought 10 products), the user who spent more should take precedence.
 */
 
-CREATE TABLE user_transactions (
+drop table interview.user_transactions;
+
+CREATE TABLE interview.user_transactions (
     transaction_id INT,
     product_id INT,
     user_id INT,
     spend DECIMAL(10, 2)
 );
 
-INSERT INTO user_transactions (transaction_id, product_id, user_id, spend)
+INSERT INTO interview.user_transactions (transaction_id, product_id, user_id, spend)
 VALUES
     (131432, 1324, 128, 699.78),
     (131433, 1313, 128, 501.00),
     (153853, 2134, 102, 1001.20),
     (247826, 8476, 133, 1051.00),
     (247265, 3255, 133, 1474.00),
-    (136495, 3677, 133, 247.56);
+    (136496, 3677, 133, 247.56),
+    (136497, 3678, 134, 247.56),
+    (136498, 3679, 134, 247.56);
+    
 
-select * from user_transactions;
+select * from interview.user_transactions;
+
+SELECT
+user_id,
+sum(spend) total_spend,
+count(transaction_id) total_transactions
+from interview.user_transactions
+group by user_id
+having total_spend>1000
+order by total_spend desc, total_transactions DESC
+limit 3
+
 
 -- Solution 10:
 select 
@@ -396,7 +435,9 @@ order by product_sum DESC
 
 /*markdown
 ## Question 12
+*/
 
+/*markdown
 Microsoft Azure's capacity planning team wants to understand how much data its customers are using, and how much spare capacity is left in each of it's data centers. You’re given three tables: customers, datacenters, and forecasted_demand.
 Write a query to find the total monthly unused server capacity for each data center. Output the data center id in ascending order and the total spare capacity.
 P.S. If you've read the Ace the Data Science Interview and liked it, consider writing us a review?
@@ -445,9 +486,30 @@ VALUES
     (852, 1, 60),
     (852, 3, 178);
 
-select * from datacenters;
+select * from interview.customers;
 
-select * from forecasted_demand;
+select * from interview.datacenters;
+
+select * from interview.forecasted_demand;
+
+
+select 
+DC.datacenter_id,
+DC.monthly_capacity,
+sub.md_per_datacenter,
+DC.monthly_capacity- sub.md_per_datacenter storage_left
+FROM
+interview.datacenters DC
+JOIN
+(
+select 
+datacenter_id,
+sum(monthly_demand) as md_per_datacenter
+from interview.forecasted_demand
+group by datacenter_id
+) sub
+on sub.datacenter_id=DC.datacenter_id
+
 
 select 
 f.datacenter_id,
@@ -465,9 +527,13 @@ datacenters d
 ON f.datacenter_id=d.datacenter_id
 
 /*markdown
-## Question 13:
 
+## Question 13:
+*/
+
+/*markdown
 Given a table of Facebook posts, for each user who posted at least twice in 2021, write a query to find the number of days between each user’s first post of the year and last post of the year in the year 2021. Output the user and number of the days between each user's first and last post.
+*/
 
 */
 
@@ -487,7 +553,7 @@ VALUES
     (151652, 111766, '2021-07-12 19:00:00', 'I\'m so done with covid - need travelling ASAP!');
 
 
-select * from posts
+select * from interview.posts
 
 select
 user_id,
@@ -499,12 +565,15 @@ having count(user_id) > 1
 
 /*markdown
 ## Question 14:
+*/
 
+/*markdown
 Write a query to find the top 2 power users who sent the most messages on Microsoft Teams in August 2022. Display the IDs of these 2 users along with the total number of messages they sent. Output the results in descending count of the messages.
+*/
 
+/*markdown
 Assumption:
 No two users has sent the same number of messages in August 2022.
-
 */
 
 CREATE TABLE messages (
@@ -523,7 +592,7 @@ VALUES
     (922, 3601, 4500, 'Get on the call', '2022-08-10 00:00:00');
 
 
-select * from messages;
+select * from interview.messages;
 
 select 
 sender_id,
@@ -533,9 +602,13 @@ where month(sent_date)=8 and year(sent_date)=2022
 group by sender_id
 
 /*markdown
-## Question 15: Two way relatinship
 
+## Question 15: Two way relatinship
+*/
+
+/*markdown
 You are given a table of PayPal payments showing the payer, the recipient, and the amount paid. A two-way unique relationship is established when two people send money back and forth. Write a query to find the number of two-way unique relationships in this data.
+*/
 
 */
 
@@ -555,31 +628,42 @@ INSERT INTO payments (payer_id, recipient_id, amount) VALUES
 (201, 301, 70);
 
 
-select * from payments;
+select * from interview.payments;
+
+select 
+lp.payer_id,
+lp.recipient_id
+FROM 
+interview.payments lp 
+join 
+interview.payments rp 
+on
+lp.recipient_id=rp.payer_id
+where lp.payer_id=rp.recipient_id
 
 select 
 *
 FROM
-payments
+interview.payments
 where (payer_id, recipient_id) in
 (
 select
 p1.payer_id, p1.recipient_id
-from payments p1
-JOIN payments p2 on p1.payer_id=p2.recipient_id and p1.recipient_id=p2.payer_id
+from interview.payments p1
+JOIN interview.payments p2 on p1.payer_id=p2.recipient_id and p1.recipient_id=p2.payer_id
 )
 and payer_id<recipient_id
 -- where payer_id=recipient_id
 
 SELECT 
 COUNT(DISTINCT CONCAT(payer_id, '-', recipient_id)) AS unique_relationships
-FROM payments
-WHERE (payer_id, recipient_id) IN (SELECT recipient_id, payer_id FROM payments)
+FROM interview.payments
+WHERE (payer_id, recipient_id) IN (SELECT recipient_id, payer_id FROM interview.payments)
   AND payer_id < recipient_id;
-
 
 /*markdown
 ## Question 17
+*/
 
 Google marketing managers are analyzing the performance of various advertising accounts over the last month. They need your help to gather the relevant data.
 Write a query to calculate the return on ad spend (ROAS) for each advertiser across all ad campaigns. Round your answer to 2 decimal places, and order your output by the advertiser_id.
@@ -1494,13 +1578,13 @@ Set all the active applcations to closed in the jobapplications table for ABC Co
 use interview;
 
 -- Create Company table
-CREATE TABLE Company (
+CREATE TABLE interview.Company (
     company_id INT PRIMARY KEY,
     company_name VARCHAR(255) NOT NULL
 );
 
 -- Create JobApplications table
-CREATE TABLE JobApplications (
+CREATE TABLE interview.JobApplications (
     application_id INT PRIMARY KEY,
     status VARCHAR(50) NOT NULL,
     company_id INT,
@@ -1509,14 +1593,14 @@ CREATE TABLE JobApplications (
 
 
 -- Insert dummy data into Company table
-INSERT INTO Company (company_id, company_name) VALUES
+INSERT INTO interview.Company (company_id, company_name) VALUES
     (1, 'ABC Corporation'),
     (2, 'XYZ Ltd'),
     (3, '123 Industries');
 
 
 -- Insert dummy data into JobApplications table
-INSERT INTO JobApplications (application_id, status, company_id) VALUES
+INSERT INTO interview.JobApplications (application_id, status, company_id) VALUES
     (101, 'Pending', 1),
     (102, 'Rejected', 2),
     (103, 'Accepted', 3),
@@ -1524,9 +1608,15 @@ INSERT INTO JobApplications (application_id, status, company_id) VALUES
     (105, 'Accepted', 2);
 
 
-select * from Company;
+select * from interview.Company;
 
 select * from JobApplications;
+
+update interview.JobApplications set 
+status='closed'
+where status='Pending'
+
+
 
 update JobApplications
 set status='closed'
@@ -1540,14 +1630,14 @@ where company_id=(select company_id from Company where company_name="ABC Corpora
 
 use interview;
 
-CREATE TABLE bugs (
+CREATE TABLE interview.bugs (
     bug_id INT,
     title VARCHAR(255),
     priority VARCHAR(50),
     severity INT
 );
 
-INSERT INTO bugs (title, priority, severity) VALUES
+INSERT INTO interview.bugs (title, priority, severity) VALUES
     ('Bug1', 'High', 10),
     ('Bug2', 'High', 8),
     ('Bug3', 'High', 9),
@@ -1559,6 +1649,39 @@ INSERT INTO bugs (title, priority, severity) VALUES
     ('Bug9', 'Low', 1);
 
 select * from bugs;
+
+with cte as (
+    SELECT
+    priority,
+    max(severity) as top_severe
+    from 
+    interview.bugs
+    group by priority 
+)
+select 
+title,
+priority,
+severity
+from
+interview.bugs
+where (priority, severity) in (select priority , top_severe from cte)
+
+with cte as (
+    SELECT
+    title,
+    priority,
+    severity,
+    row_number() over (PARTITION by priority order by severity desc) rn 
+    from 
+    interview.bugs
+)
+select 
+title,
+priority,
+severity
+from
+cte 
+where rn<3
 
 select
 *,
@@ -1590,6 +1713,7 @@ ct2 AS (
   ) sub) su
   WHERE top2 IS NOT NULL
 )
+SELECT * FROM ct1 JOIN ct2 ON ct1.priority = ct2.priority;
 
 SELECT * FROM ct1 JOIN ct2 ON ct1.priority = ct2.priority;
 
@@ -1603,7 +1727,7 @@ The engagements in the consulting_engagements table are complete for the year 20
 */
 
 -- Create staffing Table
-CREATE TABLE staffing (
+CREATE TABLE interview.staffing (
     employee_id INTEGER,
     is_consultant BOOLEAN,
     job_id INTEGER,
@@ -1613,7 +1737,7 @@ CREATE TABLE staffing (
 
 
 -- Insert data into staffing Table
-INSERT INTO staffing (employee_id, is_consultant, job_id) VALUES
+INSERT INTO interview.staffing (employee_id, is_consultant, job_id) VALUES
 (111, true, 7898),
 (121, false, 6789),
 (156, true, 4455);
@@ -1621,7 +1745,7 @@ INSERT INTO staffing (employee_id, is_consultant, job_id) VALUES
 
 
 -- Create consulting_engagements Table
-CREATE TABLE consulting_engagements (
+CREATE TABLE interview.consulting_engagements (
     job_id INTEGER,
     client_id INTEGER,
     start_date DATE,
@@ -1631,15 +1755,15 @@ CREATE TABLE consulting_engagements (
 
 
 -- Insert data into consulting_engagements Table
-INSERT INTO consulting_engagements (job_id, client_id, start_date, end_date, contract_amount) VALUES
+INSERT INTO interview.consulting_engagements (job_id, client_id, start_date, end_date, contract_amount) VALUES
 (7898, 20076, '2021-05-25', '2021-06-30', 11290.00),
 (6789, 20045, '2021-06-01', '2021-11-12', 33040.00),
 (4455, 20001, '2021-01-25', '2021-05-31', 31839.00);
 
 
-select * from staffing
+select * from interview.staffing
 
-select * from consulting_engagements;
+select * from interview.consulting_engagements;
 
 select
 s.employee_id,
@@ -1650,18 +1774,26 @@ join consulting_engagements  ce
 on s.job_id=ce.job_id and s.is_consultant=1
 
 /*markdown
+
 ## Question 35:
 You are given a songs_history table that keeps track of users' listening history on Spotify. 
+*/
 
+/*markdown
 The songs_weekly table tracks how many times users listened to each song for all days between August 1 and August 7, 2022.
+*/
 
+/*markdown
 Write a query to show the user ID, song ID, and the number of times the user has played each song as of August 4, 2022. We'll refer to the number of song plays as song_plays. The rows with the most song plays should be at the top of the output.
+*/
 
+/*markdown
 Assumption:
 The songs_history table holds data that ends on July 31, 2022. Output should include the historical data in this table.
 There may be a new user in the weekly table who is not present in the history table.
 A user may listen to a song for the first time, in which case no existing (user_id, song_id) user-song pair exists in the history table.
 A user may listen to a specific song multiple times in the same day.
+*/
 
 */
 
@@ -1724,3 +1856,122 @@ on sub.user_id=sh.user_id and sub.song_id=sh.song_id
 order by song_plays desc
 
 
+
+/*markdown
+### Tiger Analytics SQL question:
+*/
+
+/*markdown
+#### Q1: find the sum of ordervalue for those users who ordered on both days
+*/
+
+truncate table interview.tigerorders;
+
+CREATE TABLE interview.tigerorders (
+    orderdate DATE,
+    userid INT,
+    ordervalue DECIMAL(10, 2)
+);
+
+
+INSERT INTO interview.tigerorders (orderdate, userid, ordervalue) VALUES
+    ('2024-02-01', 1, 50.00),
+    ('2024-02-01', 2, 75.50),
+    ('2024-02-01', 2, 30.25),
+    ('2024-02-01', 3, 45.75),
+    ('2024-02-01', 3, 60.00),
+    ('2024-02-01', 3, 25.50),
+    ('2024-02-02', 1, 40.00),
+    ('2024-02-02', 2, 55.25),
+    ('2024-02-02', 2, 20.75),
+    ('2024-02-02', 3, 35.50),
+    ('2024-02-02', 3, 50.75),
+    ('2024-02-02', 3, 15.25);
+
+
+delete from interview.tigerorders where userid=1 and orderdate="2024-02-01"
+
+delete from interview.tigerorders where userid=2 and orderdate="2024-02-01"
+
+select * from interview.tigerorders
+
+SELECT 
+userid,
+sum(ordervalue)
+from interview.tigerorders
+group by userid
+having count( distinct(orderdate))>1
+
+/*markdown
+#### Q2: how will inner and outer joins behave for the follwing tables
+*/
+
+create table interview.A(
+    id int¸
+)
+
+insert into interview.A (id) values (1),(1),(1)
+
+insert into interview.A (id) values (null)
+
+create table interview.B(
+    id int
+)
+
+truncate table interview.B
+
+insert into interview.B (id) values (1),(1)
+
+select * from interview.A;
+
+select * from interview.B;
+
+insert into interview.B (id) values (null)
+
+select * from interview.A join interview.B on A.id=B.id
+
+select * from interview.A left join interview.B on A.id=B.id
+
+select * from interview.A right join interview.B on A.id=B.id
+
+-- nulls don't particiate in joins
+-- but in outer joins nulls from the original table will stay
+-- ex: in left outer left nulls will appear in the output
+
+/*markdown
+## Incedo interview question:
+
+write a sql query to get the score of all the teams participating. 1 point for 1 win . 0 for loss
+*/
+
+CREATE TABLE interview.results (
+    team1 VARCHAR(50),
+    team2 VARCHAR(50),
+    result VARCHAR(50)
+);
+
+
+
+-- Insert data into the results table
+INSERT INTO interview.results (team1, team2, result) VALUES
+('India', 'Pakistan', 'India'),
+('England', 'Afghanistan', 'Afghanistan'),
+('Australia', 'India', 'India'),
+('Sri Lanka', 'Bangladesh', 'Sri Lanka'),
+('England', 'Pakistan', 'England'),
+('Australia', 'New Zealand', 'Australia');
+
+
+select * from interview.results
+
+SELECT team1 AS team, CASE WHEN result = team1 THEN 1 ELSE 0 END AS score FROM interview.results
+UNION ALL
+SELECT team2 AS team, CASE WHEN result = team2 THEN 1 ELSE 0 END AS score FROM interview.results
+
+SELECT team, COALESCE(SUM(score), 0) AS score
+FROM (
+    SELECT team1 AS team, CASE WHEN result = team1 THEN 1 ELSE 0 END AS score FROM your_table
+    UNION ALL
+    SELECT team2 AS team, CASE WHEN result = team2 THEN 1 ELSE 0 END AS score FROM your_table
+) AS scores
+GROUP BY team;
